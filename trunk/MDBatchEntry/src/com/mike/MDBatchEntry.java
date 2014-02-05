@@ -3,6 +3,7 @@ package com.mike;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.text.DateFormat;
@@ -260,8 +261,21 @@ public class MDBatchEntry {
         	}
         }
         
+        {
+        	File thisDir = new File(System.getProperty("user.dir"));
+	        final String fileName = description;
+	        String[] files = thisDir.list(new FilenameFilter() {
+				
+				@Override
+				public boolean accept(File arg0, String arg1) {
+					return arg1.startsWith(fileName);
+				}
+			});
+	        if(files.length > 0)
+	        	description += String.format("(%d)", files.length);
+        }
         File outputFile = new File(description.replace(" ", "_")+".txt");
-        if(!outputFile.exists()){
+        while(!outputFile.exists()){
 			try {
 				outputFile.createNewFile();
 			} catch (IOException e) {
